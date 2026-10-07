@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4c5a2c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fleet Finder">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>[hidden]{display:none!important}html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px)}body{margin:0}img{max-width:100%}</style>
+<title>Adventure Classics Fleet Finder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Stencil+One&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --bg:#eeede4; --panel:#fbfaf4; --ink:#23261c; --mute:#6b6e5c; --line:#d6d4c4;
+  --olive:#4c5a2c; --olive-ink:#fbfaf4; --khaki:#c9b98a;
+  --ok:#3f7a3a; --fix:#b7801a; --rep:#b2442e; --miss:#6d3a8c;
+  --chip:#e6e4d6;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--bg:#171913;--panel:#20231a;--ink:#e9e8dc;--mute:#9a9c89;--line:#363a2c;
+  --olive:#8ea35a;--olive-ink:#171913;--khaki:#8b7d55;--ok:#6cb865;--fix:#dba43c;--rep:#e0705a;--miss:#b07fd0;--chip:#2b2f23}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#171913;--panel:#20231a;--ink:#e9e8dc;--mute:#9a9c89;--line:#363a2c;
+  --olive:#8ea35a;--olive-ink:#171913;--khaki:#8b7d55;--ok:#6cb865;--fix:#dba43c;--rep:#e0705a;--miss:#b07fd0;--chip:#2b2f23}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 "IBM Plex Sans",system-ui,sans-serif;padding:0 16px 120px}
+.wrap{max-width:760px;margin:0 auto}
+h1{font-family:"Saira Stencil One",Impact,sans-serif;font-weight:400;font-size:30px;margin:18px 0 0;letter-spacing:.02em;color:var(--olive)}
+.sub{color:var(--mute);margin:0 0 14px;font-size:13px}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.tabs{display:flex;gap:6px;margin:10px 0 14px}
+.tabs button{flex:1}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:9px 10px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--olive);outline-offset:2px}
+button.primary{background:var(--olive);color:var(--olive-ink);border-color:var(--olive);font-weight:600}
+.tabs button[aria-pressed="true"]{background:var(--olive);color:var(--olive-ink);border-color:var(--olive)}
+section.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 10px;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label.f{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--mute)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:8px;width:100%}
+textarea{min-height:64px}
+.item{border-top:1px solid var(--line);padding:10px 0}
+.item:first-of-type{border-top:0}
+.irow{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.iname{font-weight:500}
+.icost{font-size:12px;color:var(--mute)}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px}
+.seg button{padding:8px 2px;font-size:13px;font-weight:500;background:var(--chip);border-color:transparent}
+.seg button[data-s="ok"][aria-pressed="true"]{background:var(--ok);color:#fff}
+.seg button[data-s="fix"][aria-pressed="true"]{background:var(--fix);color:#fff}
+.seg button[data-s="rep"][aria-pressed="true"]{background:var(--rep);color:#fff}
+.seg button[data-s="miss"][aria-pressed="true"]{background:var(--miss);color:#fff}
+.edit{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.edit label{font-size:11px}
+a.btn{display:inline-block;text-decoration:none;border-radius:8px;padding:9px 12px;border:1px solid var(--olive);background:var(--olive);color:var(--olive-ink);font-weight:600}
+.inote textarea{margin-top:6px;min-height:52px}
+.guide{margin:6px 0 0;padding:8px 10px 8px 26px;background:var(--chip);border-radius:8px;font-size:13px}
+.guide li{margin:2px 0}
+.link{background:none;border:0;padding:2px 0;color:var(--olive);font-size:12px;text-decoration:underline}
+.flags label{display:flex;gap:8px;align-items:center;padding:5px 0}
+.flags input{width:auto}
+.warn{color:var(--rep);font-weight:600;font-size:13px;margin-top:6px}
+/* offer bar */
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:var(--bg);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));z-index:5}
+.bar .in{max-width:760px;margin:0 auto;display:grid;grid-template-columns:.7fr 1fr 1fr 1fr 1fr;gap:8px;text-align:center}
+.bar small{display:block;font-size:10px;letter-spacing:.1em;text-transform:uppercase;opacity:.7}
+.bar b{font-family:"IBM Plex Mono",monospace;font-size:15px}
+.rating{margin-top:10px;padding:10px;border-radius:8px;font-weight:600;font-size:18px;text-align:center;background:var(--chip)}
+.rating[data-r="Strong"],.rt[data-r="Strong"]{color:var(--ok)}.rating[data-r="Moderate"],.rt[data-r="Moderate"]{color:var(--fix)}.rating[data-r="Weak"],.rt[data-r="Weak"]{color:var(--rep)}
+.bar .rt[data-r]{background:var(--panel);border-radius:6px;padding:0 6px}
+.bar .walk b{color:var(--khaki)}
+.bk{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:14px}
+.bk .t{border-top:1px solid var(--line);padding-top:6px;font-weight:600}
+.verdict{padding:10px;border-radius:8px;font-weight:600;margin-top:10px;background:var(--chip)}
+.saved{display:flex;justify-content:space-between;gap:8px;align-items:center;border-top:1px solid var(--line);padding:10px 0;flex-wrap:wrap}
+.saved:first-of-type{border-top:0}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.note{font-size:12px;color:var(--mute)}
+#toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--olive);color:var(--olive-ink);padding:8px 14px;border-radius:8px;z-index:9}
+pre{white-space:pre-wrap;font-size:12px;background:var(--bg);padding:8px;border-radius:6px}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <h1>Adventure Classics Fleet Finder</h1>
+  <p class="sub">Score a 1946–48 CJ2A at the curb and see whether it is a Fleet Buy: an offer that keeps your all-in cost inside budget.</p>
+  <div class="tabs">
+    <button id="t-score" aria-pressed="true" data-tab="score">Score</button>
+    <button id="t-offer" aria-pressed="false" data-tab="offer">Offer</button>
+    <button id="t-saved" aria-pressed="false" data-tab="saved">Saved</button>
+    <button id="t-set" aria-pressed="false" data-tab="set">Settings</button>
+  </div>
+
+  <div id="p-score">
+    <section class="card">
+      <h2>The Jeep <span id="exnote" class="note" style="text-transform:none;letter-spacing:0"></span></h2>
+      <div class="grid">
+        <label class="f">Jeep / Fleet No.<input id="v-fleet"></label>
+        <label class="f">Evaluator(s)<input id="v-evalr"></label>
+        <label class="f">Odometer / hours<input id="v-odo" class="num"></label>
+        <label class="f">Seller / listing<input id="v-seller"></label>
+        <label class="f">Town<input id="v-town"></label>
+        <label class="f">Asking $<input id="v-ask" class="num" inputmode="numeric"></label>
+        <label class="f">Serial # (CJ2A-…)<input id="v-serial"></label>
+        <label class="f">Year<select id="v-year"><option></option><option>1946</option><option>1947</option><option>1948</option><option>Unsure</option></select></label>
+        <label class="f">Patina / originality<select id="v-orig"><option value="">—</option><option>5 · Survivor, keep as-is</option><option>4 · Mostly original</option><option>3 · Mixed</option><option>2 · Heavily modified</option><option>1 · Parts Jeep</option></select></label>
+      </div>
+      <h2 style="margin-top:14px">Seller contact</h2>
+      <button class="link" id="sq-tog" style="margin-bottom:6px">guide: questions to ask the seller</button><ul class="guide" id="sq" hidden></ul>
+      <div class="grid">
+        <label class="f">Seller name<input id="v-sname" autocomplete="off"></label>
+        <label class="f">Phone<input id="v-phone" inputmode="tel"></label>
+        <label class="f">Email<input id="v-email" inputmode="email"></label>
+        <label class="f">Address / where the Jeep is<input id="v-addr"></label>
+        <label class="f">Facebook profile or listing link<input id="v-fb"></label>
+        <label class="f">Best way / time to reach<input id="v-best" placeholder="Text after 5pm"></label>
+      </div>
+      <div class="flags" style="margin-top:8px">
+        <label class="f" style="display:flex;padding:0 0 6px">Paperwork<select id="fl-doc"><option value="">Not checked yet</option><option value="title">Title in hand, name matches seller</option><option value="bos">Bill of sale only</option><option value="mismatch">Title, but name doesn't match seller</option><option value="none">No paperwork</option></select></label>
+        <label><input type="checkbox" id="fl-serial"> Serial plate matches title</label>
+        <label><input type="checkbox" id="fl-runs"> Started and drove it</label>
+      </div>
+      <div id="flagwarn" class="warn"></div>
+    </section>
+    <p class="note" style="margin:0 0 10px"><b>Retain / Service</b> = full points, no work beyond service. <b>Restore</b> = repair the original, half points. <b>Replace</b> or <b>Missing</b> = buy new, zero points. Unchecked items score zero and are costed at Restore until you mark them. “Cost only” items don’t change the 100-point score but do change the offer. Tap “guide” for what to check, “notes” to jot what you find, and “costs” to adjust parts or hours.</p>
+    <div id="sections"></div>
+    <section class="card"><h2>Notes</h2><textarea id="v-notes" placeholder="What the seller said, extras included, photos taken…"></textarea></section>
+    <div class="row"><button class="primary" id="b-save">Save this Jeep</button><button id="b-new">Start a new Jeep</button></div>
+    <div id="newconfirm" hidden class="row" style="margin-top:8px"><span class="note">Clear the sheet? Unsaved scoring is lost.</span><button id="b-new-yes">Clear</button><button id="b-new-no">Keep</button></div>
+  </div>
+
+  <div id="p-offer" hidden>
+    <section class="card"><h2>Adventure Classics score</h2><div class="bk" id="sc"></div></section>
+    <section class="card"><h2>What it takes to make it a Fleet Buy</h2><div class="bk" id="bk"></div></section>
+    <section class="card"><h2>Offer</h2><div class="bk" id="ok"></div><div class="rating" id="rating"></div><div class="verdict" id="verdict"></div><p class="note" style="margin:8px 0 0">Strong buy: asking is at or under your opening offer and the score is 75+. Moderate buy: asking is at or under your walk-away price and the score is 60+. Weak buy: asking is over walk-away, the score is under 60, the serial isn't verified, or there's no usable paperwork. Bill of sale only caps the rating at Moderate and adds the paperwork allowance from Settings ($300 to start); a title name mismatch or no paperwork adds twice that.</p></section>
+    <section class="card"><h2>Worth it when done?</h2>
+      <label class="f" style="max-width:260px">Finished market value for this Jeep $<input id="v-fv" class="num" inputmode="numeric" placeholder="uses Settings value"></label>
+      <div class="bk" id="mv" style="margin-top:10px"></div><div class="verdict" id="mvv"></div>
+      <p class="note" style="margin:8px 0 0">Net sale = market value minus cost to sell (fees, ads, transport). Break-even = the most you can pay the seller and still get your money back if you sell. To sell, price at or above the minimum sale price shown.</p>
+    </section>
+    <section class="card"><h2>Biggest costs on this Jeep</h2><div class="bk" id="top"></div></section>
+    <section class="card"><h2>Send Jeep Report</h2>
+      <div class="grid">
+        <label class="f">Text to (phone)<input id="r-phone" inputmode="tel" placeholder="413-555-0100"></label>
+        <label class="f">Email to<input id="r-email" inputmode="email" placeholder="partner@example.com"></label>
+      </div>
+      <div class="row" style="margin-top:10px"><a class="btn primary" id="r-sms" href="#">Text report</a><a class="btn primary" id="r-mail" href="#">Email report</a><button id="r-copy">Copy report</button><button id="r-share" hidden>Share…</button></div>
+      <p class="note">Text and Email open your phone's Messages or Mail app with the report filled in. If nothing opens, tap Copy report and paste it into any message.</p>
+      <details><summary class="note">Preview report</summary><pre id="report"></pre></details>
+    </section>
+    <section class="card"><h2>Talking points for the seller</h2><pre id="summary"></pre><button id="b-copy">Copy summary</button></section>
+  </div>
+
+  <div id="p-saved" hidden><section class="card"><h2>Jeeps you've scored <span id="fleetct"></span></h2><div id="savedlist"></div></section></div>
+
+  <div id="p-set" hidden>
+    <section class="card"><h2>Budget</h2><div class="grid">
+      <label class="f">All-in target (opening) $<input id="s-lo" class="num" inputmode="numeric"></label>
+      <label class="f">All-in ceiling (walk-away) $<input id="s-hi" class="num" inputmode="numeric"></label>
+      <label class="f">Mechanical labor $/hr<input id="s-rate" class="num" inputmode="numeric"></label>
+      <label class="f">Body labor $/hr<input id="s-brate" class="num" inputmode="numeric"></label>
+      <label class="f">Contingency %<input id="s-cont" class="num" inputmode="numeric"></label>
+      <label class="f">Market value of a finished Fleet Buy $<input id="s-fv" class="num" inputmode="numeric"></label>
+      <label class="f">Cost to sell %<input id="s-sell" class="num" inputmode="numeric"></label>
+      <label class="f">Bill-of-sale paperwork allowance $<input id="s-bos" class="num" inputmode="numeric"></label>
+      <label class="f">Fleet Buy kit parts $<input id="s-kit" class="num" inputmode="numeric"></label>
+      <label class="f">Fleet Buy kit hours<input id="s-kith" class="num" inputmode="numeric"></label>
+      <label class="f">Fleet goal (Jeeps)<input id="s-goal" class="num" inputmode="numeric"></label>
+    </div>
+    <p class="note">Fleet Buy kit covers what every event Jeep gets no matter its condition: seat belts, fire extinguisher, first-aid kit, fluids and filters, tune-up, event decals. Use your real shop rate, or a lower rate if you do the work yourself.</p></section>
+    <section class="card"><h2>Part cost defaults</h2>
+      <p class="note">Starting estimates are rough 2026 new-parts prices from CJ2A suppliers plus typical shop hours. When you adjust costs on a Jeep, save them here so every future Jeep starts from your numbers.</p>
+      <div class="row"><button id="b-mkdef">Use this Jeep's costs as my defaults</button><button id="b-resetdef">Restore starting estimates</button></div>
+    </section>
+  </div>
+</div>
+
+<div class="bar"><div class="in">
+  <div><small>Score</small><b id="bar-score">—</b></div>
+  <div><small>Rating</small><b id="bar-rate" class="rt">—</b></div>
+  <div><small>Recon cost</small><b id="bar-rc">—</b></div>
+  <div><small>Open at</small><b id="bar-open">—</b></div>
+  <div class="walk"><small>Walk away over</small><b id="bar-walk">—</b></div>
+</div></div>
+<div id="toast" hidden></div>
+
+<script>
+// [name, points, restoreParts, restoreHrs, replaceParts, replaceHrs, criterion]  points 0 = cost-only item; costs null = points-only item
+const CATS={"Frame & Chassis":25,"Body & Sheet Metal":25,"Drivetrain":15,"Electrical & Wiring":10,"Roadworthiness & Safety":10,"Authenticity & Rare Features":5,"Interior & Details":10};
+const BASE = {
+ "Frame & Chassis":[
+  ["Frame integrity",10,200,8,1400,24,"No rust-jacking, cracks, bends, or weld repairs"],
+  ["Rust condition",10,150,8,800,12,"Minimal scaling; no deep pitting or rot. Surface rust you can wire-brush and paint = Restore"],
+  ["Crossmembers / spring mounts",5,100,5,400,8,"Solid and structurally sound"]],
+ "Body & Sheet Metal":[
+  ["Tub",8,400,14,3800,30,"Original tub"],["Floors and hat channels",7,300,10,600,12,"Solid; no rot"],
+  ["Panels",5,150,8,900,10,"Straight; minimal filler. Dings and repaint = Restore"],
+  ["Tailgate / fenders / hood / grille",5,150,6,1500,10,"Willys-script tailgate and major panels intact"],
+  ["Windshield frame & glass",0,120,4,700,5,""],["Bumpers & pintle",0,20,1,250,2,""]],
+ "Drivetrain":[
+  ["Engine · L-134",5,400,10,3500,20,"Runs smoothly; no smoke or knock"],["Transmission · T-90",5,250,8,1400,10,"Shifts properly; no grinding"],
+  ["Transfer case & axles",5,750,24,3600,30,"Quiet; no leaks (Dana 18, Dana 25, Dana 23/41)"],
+  ["Clutch",0,250,8,400,10,""],["Cooling: radiator, pump, hoses",0,250,3,650,4,""],["Fuel: tank, pump, carburetor",0,200,4,550,5,""],
+  ["Ignition",0,80,2,250,2,""],["Exhaust",0,60,2,200,3,""],["Driveshafts & U-joints",0,60,2,400,2,""]],
+ "Electrical & Wiring":[
+  ["Wiring",5,60,3,350,8,"Clean, intact and not spliced"],["Lights / gauges / horn",5,80,2,450,4,"Operational"],
+  ["Generator, regulator, battery",0,120,2,400,3,""]],
+ "Roadworthiness & Safety":[
+  ["Brakes / steering",6,400,10,1250,14,"Brakes effective; steering tight"],["Tires / suspension",4,400,6,1900,12,"Tires safe; suspension functional"]],
+ "Authenticity & Rare Features":[
+  ["Matching numbers",1,null,null,null,null,"Engine/frame matching"],["Correct early details",1,null,null,null,null,"Tool indents, column shift, etc."],
+  ["Rare options",3,null,null,null,null,"PTO, overdrive, locking hubs, top: 1 point each up to 3"]],
+ "Interior & Details":[
+  ["Seats and frames",4,150,3,700,2,"Correct seats and frames"],["Dash / gauges",4,100,3,400,4,"Dash uncut; gauges intact"],
+  ["Steering wheel / column",2,60,2,250,2,"Original"],["Top & bows",0,100,2,600,3,""],["Pedals & controls",0,60,2,250,2,""]]
+};
+const isBody=k=>{for(const r of BASE["Body & Sheet Metal"])if(r[0]===k)return true;return k==="Rust condition"};
+const GUIDE={"Frame integrity": ["Look for rust-through anywhere on the frame. Note exactly where.", "Photo: both sides of any rusted area, where you can reach.", "Front crossmember in the engine bay: is it intact where it meets each frame rail? Any cracks?", "Any creative reinforcements, plates or non-factory welds?"], "Rust condition": ["Surface rust you can wire-brush = Restore. Pitting, scale that flakes off in layers, or holes = Replace.", "Tap suspect spots with a screwdriver handle; soft or crunchy means rot.", "Photo: both sides of any rust-through."], "Crossmembers / spring mounts": ["Shackle mounts at the frame: solid, cracked, or rusted thin?", "Tow bar or pintle on the rear crossmember: bolted on (correct) or welded on?", "Front crossmember: cracks where it meets the rails?"], "Tub": ["Rusted through anywhere? Photo both sides of each panel if you can.", "Obvious patch-panel work? Photo both sides.", "Drain slots on the tub sides near the steps: open, or welded shut?", "Any holes near the fuel filler neck? What caused them?", "Driver-side A-pillar where it meets the floor: through-hole? How bad?"], "Floors and hat channels": ["Hat channels under the floor, both sides: solid or rotted?", "Floor rust-through: photo top and bottom.", "Sheet metal around the transmission tunnel: stock, or creative work? What was done, and is it repairable?"], "Panels": ["Run a magnet over the sides; where it won't stick there's filler.", "Patch panels? Photo both sides."], "Tailgate / fenders / hood / grille": ["Tailgate: Willys script present? Hinges and chains?", "Tool box (under the seat): lid works, hinges there, inside intact or rusted through?"], "Engine · L-134": ["Hook up a battery if you can. Does it turn over even if it won't start?", "Listen for knocking; look for blue smoke on startup.", "Generally complete? List any major components missing."], "Cooling: radiator, pump, hoses": ["Radiator and shroud: present, loose in the Jeep, or missing entirely?"], "Exhaust": ["Intact from manifold to tailpipe? If complete, general condition."], "Transmission · T-90": ["Shifts through all gears? Smoothly or grinding?", "Overdrive, if fitted: does it engage?"], "Transfer case & axles": ["Drivetrain complete from motor to front and rear axles? List anything missing.", "Transfer case shifts into all ranges and neutral?", "Front hubs: lockouts or drive flanges? If lockouts, do they turn and lock?", "Look for leaks at the axle and transfer case seals."], "Driveshafts & U-joints": ["With everything in neutral, can you spin the front and rear driveshafts by hand?", "Wiggle each U-joint for play."], "Brakes / steering": ["Drums or discs? (Stock is drums.)", "Do the hubs turn, or are they bound up?", "Master cylinder: can you get the lid off? Look inside for fluid, rust or sludge.", "Parking brake: does it pull out, lock in place, and release?", "Steering wheel: turns freely, binds, or feels crunchy?", "Drag link and tie rods all there? Any loose or clearly failing joints?"], "Tires / suspension": ["Springs and spring plates all there?", "Shackles and hardware all or mostly present?", "Wheels and tires included? Condition, and the spare?", "Wheel studs: any broken, missing or mismatched? Ask what happened."], "Wiring": ["Harness spliced or taped? Any burned wires?", "If a new harness is included: stock-style or aftermarket?"], "Dash / gauges": ["Any non-stock changes to the dash: extra holes, cut openings, added switches?"], "Seats and frames": ["Does it come with both seats or just one?", "Seat frames bent or rusted?"], "Top & bows": ["Soft top or bikini top included?", "Top frame present and generally complete?", "Door skins included?"], "Matching numbers": ["Serial / data plate on the firewall: present? Photo it.", "Does the serial match the title or bill of sale?"], "Rare options": ["Plow and front mount: does the plow come with it?", "PTO, overdrive, locking hubs, top: note each one present."]};
+const SELLERQ=["What can you tell me about the Jeep? Where did it come from?", "How long have you had it, and why are you selling?", "How many miles on the odometer? Believed accurate?", "Title: confirm whether there is one, and whose name is on it.", "Serial / data plate on the firewall: present or not?", "Any extra parts that come with it or are available?", "Wheels, tires, top, plow or other accessories included?"];
+const DEFSET={lo:10000,hi:12000,rate:85,brate:35,cont:15,kit:600,bos:300,fv:10250,sell:5,kith:6,goal:5};
+const S_LBL={ok:"Retain",fix:"Restore",rep:"Replace",miss:"Missing"};
+const S_PTS={ok:1,fix:.5,rep:0,miss:0};
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let costs=store.get("cj_costs2",null)||JSON.parse(JSON.stringify(BASE));
+let set=Object.assign({},DEFSET,store.get("cj_set2",{}));
+let saved=store.get("cj_saved2",[]);
+let cur=store.get("cj_cur2",null)||sample();
+const $=id=>document.getElementById(id);
+const money=n=>(n<0?"−$":"$")+Math.abs(Math.round(n)).toLocaleString();
+
+function blankJeep(){
+  const items={};for(const sec in costs)costs[sec].forEach(r=>items[r[0]]={s:null,c:r.slice(2,6),p:0});
+  return {id:Date.now(),v:{seller:"",town:"",ask:"",serial:"",year:"",orig:"",notes:"",fleet:"",evalr:"",odo:""},fl:{title:false,serial:false,runs:false},items,example:false};
+}
+function sample(){
+  const j=blankJeep();j.example=true;
+  Object.assign(j.v,{seller:"Example: FB Marketplace listing",town:"Barre, MA",ask:"6500",serial:"CJ2A-1349xx",year:"1947",orig:"4 · Mostly original",notes:"Example sheet. Ran rough, blue smoke on startup. Floors patched. Original grille and hood."});
+  j.fl={doc:"title",serial:true,runs:true};
+  const m={"Floors and hat channels":"fix","Engine · L-134":"fix","Brakes / steering":"rep","Tires / suspension":"fix","Wiring":"rep","Top & bows":"miss","Seats and frames":"fix","Rust condition":"fix"};
+  for(const k in j.items)j.items[k].s=m[k]||"ok";
+  j.items["Matching numbers"].p=1;j.items["Correct early details"].p=1;j.items["Rare options"].p=1;
+  return j;
+}
+
+function itemCost(it,k){
+  if(!it.c||it.c[0]==null)return{p:0,h:0,l:0,t:0};const s=it.s||"fix"; if(s==="ok")return{p:0,h:0,l:0,t:0};
+  const [fp,fh,rp,rh]=it.c; const o=s==="fix"?{p:fp,h:fh}:{p:rp,h:rh};const b=isBody(k);o.b=b;o.l=o.h*(b?set.brate:set.rate);o.t=o.p+o.l;return o;
+}
+function calc(){
+  let p=0,h=0,bh=0,lab=0,unk=0,list=[];
+  for(const k in cur.items){const it=cur.items[k];if(!it.s&&it.c&&it.c[0]!=null)unk++;const c=itemCost(it,k);p+=c.p;if(c.b)bh+=c.h;else h+=c.h;lab+=c.l;
+    if(c.t)list.push({k,s:it.s,t:c.t});}
+  const doc=docOf();const paper=doc==="bos"?set.bos:(doc==="mismatch"||doc==="none")?set.bos*2:0;
+  const kitT=set.kit+set.kith*set.rate+paper;
+  const base=p+lab+kitT; const cont=base*set.cont/100; const rc=base+cont;
+  const walk=Math.floor((set.hi-rc)/100)*100, open=Math.floor((set.lo-rc)/100)*100;
+  const cat={};let score=0;
+  for(const sec in costs){let pts=0,$c=0;costs[sec].forEach(rw=>{const it=cur.items[rw[0]];if(!it)return;const c=itemCost(it,rw[0]);$c+=c.t;
+    if(rw[2]==null)pts+=Math.min(it.p||0,rw[1]);else if(rw[1]&&it.s)pts+=rw[1]*S_PTS[it.s];});
+    pts=Math.min(pts,CATS[sec]);cat[sec]={pts,cost:$c};score+=pts;}
+  return{paper,cat,score,p,h,bh,lab,unk,list:list.sort((a,b)=>b.t-a.t),kitT,base,cont,rc,walk,open};
+}
+
+function renderSections(){
+  const box=$("sections");box.innerHTML="";
+  for(const sec in costs){
+    const card=document.createElement("section");card.className="card";
+    card.innerHTML=`<h2><span>${sec} · ${CATS[sec]} pts</span><span class="num" data-sec="${sec}"></span></h2>`;
+    costs[sec].forEach(r=>{
+      const k=r[0],it=cur.items[k]||(cur.items[k]={s:null,c:r.slice(2,6),p:0});
+      const d=document.createElement("div");d.className="item";
+      const sid=k.replace(/\W+/g,"_");
+      const tag=r[1]?`<span class="note num">${r[1]} pt${r[1]>1?"s":""}</span>`:`<span class="note">cost only</span>`;
+      const crit=r[6]?`<div class="note">${r[6]}</div>`:"";
+      if(r[2]==null){
+        d.innerHTML=`<div class="irow"><span class="iname">${k}</span>${tag}</div>${crit}<div class="seg" style="grid-template-columns:repeat(${r[1]+1},1fr)">${Array.from({length:r[1]+1},(_,i)=>`<button data-s="ok" data-p="${i}" aria-pressed="${(it.p||0)===i}">${r[1]===1?(i?"Yes":"No"):i}</button>`).join("")}</div><div class="row" style="gap:14px"><button class="link" data-nt>${it.n?"notes ✎":"notes"}</button>${GUIDE[k]?`<button class="link" data-gd>guide</button>`:""}</div>${GUIDE[k]?`<ul class="guide" hidden>${GUIDE[k].map(x=>`<li>${x.startsWith("Photo:")?"<b>Photo:</b>"+x.slice(6):x}</li>`).join("")}</ul>`:""}<div class="inote" hidden><textarea id="n_${sid}" placeholder="Notes on ${k}">${(it.n||"").replace(/</g,"&lt;")}</textarea></div>`;
+        d.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{it.p=+b.dataset.p;d.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b));upd()});
+      } else {
+      d.innerHTML=`<div class="irow"><span class="iname">${k} ${tag}</span><span class="icost num" data-cost></span></div>${crit}
+      <div class="seg">${["ok","fix","rep","miss"].map(s=>`<button data-s="${s}" aria-pressed="${it.s===s}">${S_LBL[s]}</button>`).join("")}</div>
+      <div class="row" style="gap:14px"><button class="link" data-tog>costs</button><button class="link" data-nt>${it.n?"notes ✎":"notes"}</button>${GUIDE[k]?`<button class="link" data-gd>guide</button>`:""}</div>${GUIDE[k]?`<ul class="guide" hidden>${GUIDE[k].map(x=>`<li>${x.startsWith("Photo:")?"<b>Photo:</b>"+x.slice(6):x}</li>`).join("")}</ul>`:""}
+      <div class="inote" hidden><textarea id="n_${sid}" placeholder="Notes on ${k}">${(it.n||"").replace(/</g,"&lt;")}</textarea></div><div class="edit" hidden>${["Restore parts $","Restore hrs","New parts $","New hrs"].map((l,i)=>`<label class="f">${l}<input id="c_${sid}_${i}" class="num" inputmode="decimal" value="${it.c[i]}"></label>`).join("")}</div>`;
+      d.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{it.s=it.s===b.dataset.s?null:b.dataset.s;d.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",it.s===x.dataset.s));upd()});
+      d.querySelector("[data-tog]").onclick=()=>{const e=d.querySelector(".edit");e.hidden=!e.hidden};
+      d.querySelectorAll(".edit input").forEach((inp,i)=>inp.oninput=()=>{it.c[i]=+inp.value||0;upd()});
+      }
+      {const nt=d.querySelector("[data-nt]"),box=d.querySelector(".inote"),ta=box.querySelector("textarea");
+       nt.onclick=()=>{box.hidden=!box.hidden;if(!box.hidden)ta.focus()};
+       ta.oninput=()=>{it.n=ta.value;nt.textContent=it.n?"notes ✎":"notes";upd()};
+       if(it.n)box.hidden=false;
+       const gd=d.querySelector("[data-gd]");if(gd)gd.onclick=()=>{const u=d.querySelector(".guide");u.hidden=!u.hidden};}
+      d._it=it;d._k=k;card.appendChild(d);
+    });
+    box.appendChild(card);
+  }
+}
+function bindVehicle(){
+  ["seller","town","ask","serial","year","orig","notes","fleet","evalr","odo","sname","phone","email","addr","fb","best","fv"].forEach(f=>{const el=$("v-"+f);el.value=cur.v[f]||"";el.oninput=()=>{cur.v[f]=el.value;upd()}});
+  {const el=$("fl-doc");el.value=docOf();el.onchange=()=>{cur.fl.doc=el.value;upd()}}
+  ["serial","runs"].forEach(f=>{const el=$("fl-"+f);el.checked=!!cur.fl[f];el.onchange=()=>{cur.fl[f]=el.checked;upd()}});
+  $("exnote").textContent=cur.example?"Example Jeep · tap “Start a new Jeep” to score your own":"";
+}
+function docOf(){return cur.fl.doc!==undefined?cur.fl.doc:(cur.fl.title?"title":"")}
+function rating(r,ask){if(!ask)return"";const d=docOf();const ok=(d==="title"||d==="bos")&&cur.fl.serial;
+  if(r.walk<=0||ask>r.walk||r.score<60||!ok)return"Weak";if(ask<=r.open&&r.score>=75&&d==="title")return"Strong";return"Moderate"}
+function upd(){
+  const r=calc(),ask=+cur.v.ask||0;
+  document.querySelectorAll(".item").forEach(d=>{const cc=d.querySelector("[data-cost]");if(!cc)return;const c=itemCost(d._it,d._k);cc.textContent=d._it.s==="ok"?"$0":(d._it.s?"":"unchecked · ")+money(c.t)});
+  for(const sec in costs){const el=document.querySelector(`[data-sec="${CSS.escape(sec)}"]`);if(el)el.textContent=`${r.cat[sec].pts}/${CATS[sec]} · ${money(r.cat[sec].cost)}`}
+  const band=r.score>=90?"Excellent · strong buy":r.score>=75?"Very Good · worth restoring":r.score>=60?"Fair · restoration may be costly":"Poor · rarely cost-effective";
+  $("bar-score").textContent=r.score;
+  $("sc").innerHTML=`<span class="t" style="border:0;padding:0">Condition score</span><span class="t num" style="border:0;padding:0">${r.score} / 100</span><span class="note" style="grid-column:1/-1">${band}</span>`+Object.keys(CATS).map(c=>`<span>${c}</span><span class="num">${r.cat[c].pts}/${CATS[c]} · ${money(r.cat[c].cost)}</span>`).join("");
+  const w=[];{const d=docOf();if(d==="")w.push("Paperwork not checked");else if(d==="bos")w.push("Bill of sale only: paperwork allowance added, rating capped at Moderate");else if(d==="mismatch")w.push("Title name doesn't match seller");else if(d==="none")w.push("No paperwork");}if(!cur.fl.serial)w.push("Serial not verified");if(!cur.fl.runs)w.push("Not run/driven, engine and drivetrain are a gamble");
+  $("flagwarn").textContent=w.length?"⚠ "+w.join(" · "):"";
+  $("bar-rc").textContent=money(r.rc);$("bar-open").textContent=r.open>0?money(r.open):"Pass";$("bar-walk").textContent=r.walk>0?money(r.walk):"Pass";
+  $("bk").innerHTML=`<span>Parts</span><span class="num">${money(r.p)}</span><span>Mechanical labor (${r.h} hrs × $${set.rate})</span><span class="num">${money(r.h*set.rate)}</span><span>Body labor (${r.bh} hrs × $${set.brate})</span><span class="num">${money(r.bh*set.brate)}</span>
+    <span>Fleet Buy kit</span><span class="num">${money(r.kitT-r.paper)}</span>${r.paper?`<span>Paperwork / title allowance</span><span class="num">${money(r.paper)}</span>`:""}<span>Contingency ${set.cont}%</span><span class="num">${money(r.cont)}</span>
+    <span class="t">Reconditioning total</span><span class="t num">${money(r.rc)}</span>`+(r.unk?`<span class="note" style="grid-column:1/-1">${r.unk} unchecked item(s) counted at Fix cost.</span>`:"");
+  $("ok").innerHTML=`<span>Opening offer (fits $${set.lo.toLocaleString()} all-in)</span><span class="num">${r.open>0?money(r.open):"—"}</span>
+    <span>Walk-away price (fits $${set.hi.toLocaleString()} all-in)</span><span class="num">${r.walk>0?money(r.walk):"—"}</span>
+    <span>Seller asking</span><span class="num">${ask?money(ask):"—"}</span>`+(ask?`<span class="t">Asking + recon</span><span class="t num">${money(ask+r.rc)}</span>`:"");
+  let v;
+  if(r.walk<=0)v="Pass. Reconditioning alone exceeds your ceiling.";
+  else if(!ask)v=`Offer ${money(r.open>0?r.open:r.walk*0.85)}, go no higher than ${money(r.walk)}.`;
+  else if(ask<=r.open)v=`Buy. Asking is under your opening number. Pay asking or offer a little less.`;
+  else if(ask<=r.walk)v=`Negotiate. Open at ${money(Math.max(r.open,0)||Math.floor(r.walk*0.85/100)*100)}, settle by ${money(r.walk)}.`;
+  else v=`Over budget by ${money(ask-r.walk)}. Offer ${money(r.walk)} and be ready to leave.`;
+  $("verdict").textContent=v;
+  {const fv=+cur.v.fv||set.fv,net=fv*(1-set.sell/100),be=Math.floor((net-r.rc)/100)*100,paid=ask&&ask<=r.walk?ask:(r.walk>0?r.walk:0);
+   const row=(l,p)=>p>0?`<span>${l} (${money(p)})</span><span class="num">${money(p+r.rc)} in · ${money(net-p-r.rc)}</span>`:"";
+   $("mv").innerHTML=`<span>Finished market value</span><span class="num">${money(fv)}</span><span>Net if sold (after ${set.sell}% to sell)</span><span class="num">${money(net)}</span>
+   <span class="t">Break-even purchase price</span><span class="t num">${be>0?money(be):"None"}</span>
+   <span class="note" style="grid-column:1/-1">If you pay… total invested · gain or loss when sold</span>`+row("Opening offer",r.open)+row("Asking",ask)+row("Walk-away",r.walk)+
+   (paid?`<span class="t">Minimum sale price to break even</span><span class="t num">${money(Math.ceil((paid+r.rc)/(1-set.sell/100)/100)*100)}</span>`:"");
+   let m;if(be<=0)m="Under water: the work alone costs more than this Jeep would sell for.";
+   else if(r.walk>0&&be>=r.walk)m="Worth it: even at your walk-away price you'd get your money back.";
+   else if(r.open>0&&be>=r.open)m=`Worth it up to ${money(be)}. Paying more than that means spending more than you could sell it for.`;
+   else m=`Under water at your offers: you'd need to pay ${money(be)} or less to break even.`;
+   $("mvv").textContent=m;r.fv=fv;r.be=be;}
+  const rt=rating(r,ask);$("rating").textContent=rt?rt+" buy":"Enter asking price to rate";$("rating").dataset.r=rt;$("bar-rate").textContent=rt||"—";$("bar-rate").dataset.r=rt;
+  $("top").innerHTML=r.list.slice(0,6).map(x=>`<span>${x.k} <span class="note">(${x.s?S_LBL[x.s]:"unchecked"})</span></span><span class="num">${money(x.t)}</span>`).join("")||`<span class="note">Nothing flagged.</span>`;
+  const probs=r.list.filter(x=>x.s&&x.s!=="ok").slice(0,6).map(x=>`• ${x.k}: ${S_LBL[x.s].toLowerCase()} (~${money(x.t)})`);
+  $("summary").textContent=`${cur.v.fleet?"Fleet #"+cur.v.fleet+" · ":""}${cur.v.year||"CJ2A"} ${cur.v.serial||""} · ${cur.v.town||""}\nCondition score ${r.score}/100\nAsking ${ask?money(ask):"n/a"}${rating(r,ask)?" · "+rating(r,ask)+" buy":""}\n\nWhat it needs before it can run events:\n${probs.join("\n")||"• Minor items only"}\nEstimated to put right: ${money(r.rc)}\n\nMy offer: ${r.open>0?money(r.open):money(Math.max(r.walk,0))}`;
+  {const v=cur.v,L=[];const d=docOf();const DL={title:"Title, name matches",bos:"Bill of sale only",mismatch:"Title, name doesn't match",none:"No paperwork","":"Not checked"};
+   L.push("ADVENTURE CLASSICS FLEET FINDER · JEEP REPORT");
+   L.push(`${v.fleet?"Fleet #"+v.fleet+" · ":""}${v.year||"CJ2A"} ${v.serial||""}`.trim());
+   L.push(`Inspected ${new Date().toLocaleDateString()}${v.evalr?" by "+v.evalr:""}${v.odo?" · Odometer "+v.odo:""}`);
+   L.push("","SELLER");[["Name",v.sname||v.seller],["Phone",v.phone],["Email",v.email],["Location",v.addr||v.town],["Listing",v.fb],["Best contact",v.best]].forEach(([a,b])=>{if(b)L.push(`${a}: ${b}`)});
+   L.push("","VERDICT",`Rating: ${rating(r,ask)?rating(r,ask)+" buy":"n/a (no asking price)"}`,`Score: ${r.score}/100`,`Asking: ${ask?money(ask):"n/a"}`,`Opening offer: ${r.open>0?money(r.open):"Pass"}`,`Walk-away: ${r.walk>0?money(r.walk):"Pass"}`,`Reconditioning est.: ${money(r.rc)}`,`Paperwork: ${DL[d]} · Serial ${cur.fl.serial?"verified":"not verified"} · ${cur.fl.runs?"Ran and drove":"Not driven"}`);
+   L.push("","RESALE CHECK",`Finished market value: ${money(r.fv)}`,`Break-even purchase price: ${r.be>0?money(r.be):"none"}`);
+   L.push("","SCORE BY STEP");Object.keys(CATS).forEach(c=>L.push(`${c}: ${r.cat[c].pts}/${CATS[c]} · ${money(r.cat[c].cost)}`));
+   const w=r.list.filter(x=>x.s&&x.s!=="ok");if(w.length){L.push("","WORK NEEDED");w.forEach(x=>L.push(`- ${x.k}: ${S_LBL[x.s]} ~${money(x.t)}${cur.items[x.k].n?" · "+cur.items[x.k].n:""}`))}
+   const on=Object.keys(cur.items).filter(k=>cur.items[k].n&&!w.some(x=>x.k===k));if(on.length){L.push("","ITEM NOTES");on.forEach(k=>L.push(`- ${k}: ${cur.items[k].n}`))}
+   if(r.unk)L.push(`(${r.unk} items not inspected, counted at restore cost)`);
+   if(v.notes)L.push("","NOTES",v.notes);
+   const txt=L.join("\n");$("report").textContent=txt;
+   const subj=`Jeep Report: ${v.year||"CJ2A"} ${v.town||""} · ${rating(r,ask)||"unrated"}`;
+   $("r-sms").href=`sms:${($("r-phone").value||"").replace(/[^\d+]/g,"")}?&body=${encodeURIComponent(txt)}`;
+   $("r-mail").href=`mailto:${encodeURIComponent($("r-email").value||"")}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(txt)}`;}
+  store.set("cj_cur2",cur);
+}
+
+function renderSaved(){
+  const L=$("savedlist");$("fleetct").textContent=`goal ${set.goal}`;
+  if(!saved.length){L.innerHTML=`<p class="note">No saved Jeeps yet. Score one and tap “Save this Jeep”.</p>`;return}
+  L.innerHTML="";
+  saved.slice().sort((a,b)=>b.id-a.id).forEach(j=>{
+    const keep=cur;cur=j;const r=calc();cur=keep;
+    const d=document.createElement("div");d.className="saved";
+    d.innerHTML=`<div><b>${j.v.year||"CJ2A"} · ${j.v.town||"?"}</b> <span class="note">${j.v.sname||j.v.seller||""}${j.v.phone?" · "+j.v.phone:""}</span><br>
+      <span class="note num">Ask ${j.v.ask?money(+j.v.ask):"—"} · ${(()=>{const k=cur;cur=j;const x=rating(r,+j.v.ask||0);cur=k;return x?x+" buy · ":""})()}Score ${r.score} · Recon ${money(r.rc)} · Walk ${r.walk>0?money(r.walk):"Pass"} · ${new Date(j.id).toLocaleDateString()}</span></div>
+      <div class="row"><button data-a="open">Open</button><button data-a="del">Delete</button></div>`;
+    d.querySelector('[data-a="open"]').onclick=()=>{cur=JSON.parse(JSON.stringify(j));bindVehicle();renderSections();upd();tab("score")};
+    const del=d.querySelector('[data-a="del"]');del.onclick=()=>{if(del.dataset.arm){saved=saved.filter(x=>x.id!==j.id);store.set("cj_saved2",saved);renderSaved()}else{del.dataset.arm=1;del.textContent="Tap again to delete"}};
+    L.appendChild(d);
+  });
+}
+function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,1800)}
+function tab(t){["score","offer","saved","set"].forEach(x=>{$("p-"+x).hidden=x!==t;$("t-"+x).setAttribute("aria-pressed",x===t)});if(t==="saved")renderSaved();window.scrollTo(0,0)}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+
+$("b-save").onclick=()=>{cur.example=false;const i=saved.findIndex(x=>x.id===cur.id);const c=JSON.parse(JSON.stringify(cur));if(i>=0)saved[i]=c;else saved.push(c);store.set("cj_saved2",saved);bindVehicle();toast("Saved")};
+$("b-new").onclick=()=>$("newconfirm").hidden=false;
+$("b-new-no").onclick=()=>$("newconfirm").hidden=true;
+$("b-new-yes").onclick=()=>{cur=blankJeep();$("newconfirm").hidden=true;bindVehicle();renderSections();upd();toast("New sheet")};
+["r-phone","r-email"].forEach(id=>{const el=$(id);el.value=store.get("cj_"+id,"");el.oninput=()=>{store.set("cj_"+id,el.value);upd()}});
+if(navigator.share){$("r-share").hidden=false;$("r-share").onclick=()=>navigator.share({title:"Jeep Report",text:$("report").textContent}).catch(()=>{})}
+$("r-copy").onclick=()=>{const t=$("report").textContent;navigator.clipboard.writeText(t).then(()=>toast("Report copied")).catch(()=>{$("report").parentElement.open=true;const r=document.createRange();r.selectNodeContents($("report"));const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Selected, press copy")})};
+$("b-copy").onclick=()=>{const t=$("summary").textContent;navigator.clipboard.writeText(t).then(()=>toast("Copied")).catch(()=>{const r=document.createRange();r.selectNodeContents($("summary"));const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Selected, press copy")})};
+[["lo","s-lo"],["hi","s-hi"],["rate","s-rate"],["brate","s-brate"],["cont","s-cont"],["kit","s-kit"],["bos","s-bos"],["fv","s-fv"],["sell","s-sell"],["kith","s-kith"],["goal","s-goal"]].forEach(([k,id])=>{const el=$(id);el.value=set[k];el.oninput=()=>{set[k]=+el.value||0;store.set("cj_set2",set);upd()}});
+$("b-mkdef").onclick=()=>{for(const sec in costs)costs[sec]=costs[sec].map(r=>[r[0],...cur.items[r[0]].c]);store.set("cj_costs2",costs);toast("Defaults updated")};
+$("b-resetdef").onclick=()=>{costs=JSON.parse(JSON.stringify(BASE));store.set("cj_costs2",costs);toast("Starting estimates restored for new Jeeps")};
+
+$("sq").innerHTML=SELLERQ.map(x=>`<li>${x}</li>`).join("");$("sq-tog").onclick=()=>$("sq").hidden=!$("sq").hidden;
+bindVehicle();renderSections();upd();
+</script>
+
+<script>if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
+</body>
+</html>

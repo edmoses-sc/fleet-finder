@@ -1,0 +1,15 @@
+{
+  "name": "Adventure Classics Fleet Finder",
+  "short_name": "Fleet Finder",
+  "description": "Score 1946-48 Willys CJ2A Jeeps and make on-the-spot offers.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eeede4",
+  "theme_color": "#4c5a2c",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
